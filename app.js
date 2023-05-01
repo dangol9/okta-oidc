@@ -15,8 +15,7 @@ const client = new okta.Client({
 app.use(session({
   secret: process.env.secret,
   resave: true,
-  saveUninitialized: false,
-  cookie: { maxAge: 43200000 } //check later
+  saveUninitialized: false
 })); 
 
 app.use(express.urlencoded({extended: true}));
