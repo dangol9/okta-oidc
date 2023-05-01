@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit data</title>
+  </head>
+  <body>
+      <p>Welcome, <%= user %>!</p>
+      <p>Your id is <%= userId %></p>
+      <p> Your department is <%= department %></p>
+      <p> Your division is <%= division %></p>
+      <form id="myForm" action="/submit-data" method="post">
+        <label for="inputDept">Department:</label>
+        <input type="text" name="department">
+        <br>
+        <label for="inputDiv">Division:</label>
+        <input type="text" name="division">
+        <br>
+        <input type="submit" value="Submit">
+      </form>
+      <a href="/dashboard">Go back</a>
+  </body>
+</html>
