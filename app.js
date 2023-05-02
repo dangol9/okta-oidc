@@ -95,18 +95,22 @@ app.get('/dashboard', oidc.ensureAuthenticated(), (req, res) => {
 
 app.post('/submit-data', oidc.ensureAuthenticated(), async (req, res) => {
     try {
-        const nonEmptyBody = Object.entries(req.body)
-        .filter(([key, value]) => value !== '')
-        .map(([key, value]) => `${key}: ${value}`)
-        .join('</br>');
-        res.send(`
-        <p>Data sent: </p>
-        <pre> ${JSON.stringify(nonEmptyBody, null, '\t')} </pre><br/>
-        <a href="/user-data-edit">Go back</a>
-        `
-        );
-        let user = await initUserApi(req, client);
-        await updateUserAttr(req, client, user);
+        if(req.userContext.userinfo.groups.includes('IT')){
+            const nonEmptyBody = Object.entries(req.body)
+            .filter(([key, value]) => value !== '')
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('</br>');
+            res.send(`
+            <p>Data sent: </p>
+            <pre> ${JSON.stringify(nonEmptyBody, null, '\t')} </pre><br/>
+            <a href="/user-data-edit">Go back</a>
+            `
+            );
+            let user = await initUserApi(req, client);
+            await updateUserAttr(req, client, user);
+        } else {
+            res.send(403, "Forbidden");
+        }
     } catch (error) {
         console.log(error);
     }
