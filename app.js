@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const { ExpressOIDC } = require('@okta/oidc-middleware');
 const app = express();
 const okta = require('@okta/okta-sdk-nodejs');
@@ -13,9 +14,13 @@ const client = new okta.Client({
 
 // configure express-session middleware
 app.use(session({
-  secret: process.env.secret,
-  resave: true,
-  saveUninitialized: false
+    cookie: { maxAge: 86400000 },
+    store: new MemoryStore({
+        checkPeriod: 86400000 
+    }),
+    secret: process.env.secret,
+    resave: true,
+    saveUninitialized: false
 })); 
 
 app.use(express.urlencoded({extended: true}));
