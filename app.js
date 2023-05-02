@@ -56,13 +56,23 @@ app.get('/', (req, res) => {
 
 app.get('/user-data-edit', oidc.ensureAuthenticated(), async (req, res) => {
     try {
-        let user = await initUserApi(req, client);
-        let name = user.profile.firstName + " " + user.profile.lastName;
-        res.render('data-edit', { 
-            user: name, userId: user.id, 
-            department: user.profile.department, 
-            division: user.profile.division 
-        });
+        if(req.userContext.userinfo.groups.includes('IT')){
+            let user = await initUserApi(req, client);
+            let name = user.profile.firstName + " " + user.profile.lastName;
+            res.render('data-edit', { 
+                user: name, userId: user.id, 
+                department: user.profile.department, 
+                division: user.profile.division 
+            });
+        } else {
+            res.send(
+            `
+            <p>You don't have permission to view this page!</p></br>
+            <p>You must be in the IT group to edit your attributes!</p>
+            <a href="/dashboard">Go back</a>
+            `
+            );
+        };
     } catch (error) {
         console.log(error);
     }
@@ -72,7 +82,7 @@ app.get('/dashboard', oidc.ensureAuthenticated(), (req, res) => {
     try {
         res.send(
         `
-        <pre> ${JSON.stringify(req.userContext.userinfo, null, '\t')} </pre><br/>
+        <pre> ${JSON.stringify(req.userContext.userinfo, null, '\t')} </pre></br>
         <a href="/user-data-edit">Edit attributes</a></br>
         <a href="/">Go back</a>
         `
